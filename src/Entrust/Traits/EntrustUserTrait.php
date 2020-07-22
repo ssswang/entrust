@@ -77,7 +77,7 @@ trait EntrustUserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.role_user_table'), Config::get('entrust.user_foreign_key'), Config::get('entrust.role_foreign_key'));
+        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.role_user_table'), Config::get('entrust.user_foreign_key'), Config::get('entrust.role_foreign_key'))->where('m_application_id', Config::get('entrust.app_id'));
     }
 
     /**
@@ -92,7 +92,7 @@ trait EntrustUserTrait
         parent::boot();
 
         static::deleting(function($user) {
-            if (!method_exists(Config::get('auth.providers.users.model'), 'bootSoftDeletes')) {
+            if (!method_exists(Config::get('auth.providers.user.model'), 'bootSoftDeletes')) {
                 $user->roles()->sync([]);
             }
 
@@ -127,7 +127,10 @@ trait EntrustUserTrait
             return $requireAll;
         } else {
             foreach ($this->cachedRoles() as $role) {
-                if ($role->name == $name) {
+                $role_name = Config::get('entrust.roles_table') . '_name';
+                $role_is_active = Config::get('entrust.roles_table') . '_is_active';
+
+                if ($role->{$role_name} == $name && $role->{$role_is_active}) {
                     return true;
                 }
             }
@@ -163,12 +166,16 @@ trait EntrustUserTrait
             return $requireAll;
         } else {
             foreach ($this->cachedRoles() as $role) {
-                // Validate against the Permission table
-                foreach ($role->cachedPermissions() as $perm) {
-                    if (Str::is( $permission, $perm->name) ) {
-                        return true;
+                $role_is_active = Config::get('entrust.roles_table') . '_is_active';
+                if ($role->{$role_is_active}) {
+                    // Validate against the Permission table
+                    foreach ($role->cachedPermissions() as $perm) {
+                        $permission_name = Config::get('entrust.permissions_table') . '_name';
+                        $permission_is_active = Config::get('entrust.permissions_table') . '_is_active';
+                        if (Str::is( $permission, $perm->{$permission_name}) && $perm->{$permission_is_active} ) {
+                            return true;
+                        }
                     }
-                }
             }
         }
 
