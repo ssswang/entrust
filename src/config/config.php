@@ -9,7 +9,8 @@
  */
 
 return [
-
+    'app_id' => env('APP_ID', 0),
+    'applications_table' => 'm_application',
     /*
     |--------------------------------------------------------------------------
     | Entrust Role Model
@@ -19,7 +20,7 @@ return [
     | the role if it is in a different namespace.
     |
     */
-    'role' => 'App\Role',
+    'role' => 'App\AccessGroup',
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +30,7 @@ return [
     | This is the roles table used by Entrust to save roles to the database.
     |
     */
-    'roles_table' => 'roles',
+    'roles_table' => 'm_access_group',
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +41,7 @@ return [
     | relation between permissions and roles & roles and users
     |
     */
-    'role_foreign_key' => 'role_id',
+    'role_foreign_key' => 'm_access_group_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -62,7 +63,7 @@ return [
     | database.
     |
     */
-    'users_table' => 'users',
+    'users_table' => 'm_staff',
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +74,7 @@ return [
     | database.
     |
     */
-    'role_user_table' => 'role_user',
+    'role_user_table' => 'm_staff_access',
 
     /*
     |--------------------------------------------------------------------------
@@ -84,7 +85,7 @@ return [
     | relation between roles and users
     |
     */
-    'user_foreign_key' => 'user_id',
+    'user_foreign_key' => 'm_staff_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -106,7 +107,7 @@ return [
     | database.
     |
     */
-    'permissions_table' => 'permissions',
+    'permissions_table' => 'm_permission',
 
     /*
     |--------------------------------------------------------------------------
@@ -117,7 +118,7 @@ return [
     | between permissions and roles to the database.
     |
     */
-    'permission_role_table' => 'permission_role',
+    'permission_role_table' => 'm_access_group_permission',
 
     /*
     |--------------------------------------------------------------------------
@@ -128,5 +129,5 @@ return [
     | relation between permissions and roles
     |
     */
-    'permission_foreign_key' => 'permission_id',
+    'permission_foreign_key' => 'm_permission_id',
 ];
