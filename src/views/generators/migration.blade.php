@@ -14,48 +14,70 @@ class EntrustSetupTables extends Migration
     {
         DB::beginTransaction();
 
+        // Create table for storing applications
+        Schema::create('{{ $applicationsTable }}', function (Blueprint $table) {
+            $table->integer('{{ $applicationsTable }}_id', true);
+            $table->string('{{ $applicationsTable }}_name', 255);
+            $table->dateTime('{{ $applicationsTable }}_update_time');
+            $table->dateTime('{{ $applicationsTable }}_create_time');
+            $table->integer('{{ $applicationsTable }}_modby');
+        });
+
+
         // Create table for storing roles
         Schema::create('{{ $rolesTable }}', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name')->unique();
-            $table->string('display_name')->nullable();
-            $table->string('description')->nullable();
-            $table->timestamps();
+            $table->integer('{{ $rolesTable }}_id', true);
+            $table->string('{{ $rolesTable }}_name', 255);
+            $table->dateTime('{{ $rolesTable }}_update_time');
+            $table->dateTime('{{ $rolesTable }}_create_time');
+            $table->integer('{{ $rolesTable }}_modby');
         });
 
         // Create table for associating roles to users (Many-to-Many)
         Schema::create('{{ $roleUserTable }}', function (Blueprint $table) {
-            $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('role_id')->unsigned();
+            $table->integer('{{ $usersTable }}_id');
+            $table->integer('{{ $rolesTable }}_id');
+            $table->dateTime('{{ $roleUserTable }}_update_time');
+            $table->dateTime('{{ $roleUserTable }}_create_time');
+            $table->integer('{{ $roleUserTable }}_modby');
 
-            $table->foreign('user_id')->references('{{ $userKeyName }}')->on('{{ $usersTable }}')
-                ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('role_id')->references('id')->on('{{ $rolesTable }}')
-                ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->primary(['user_id', 'role_id']);
+            $table->primary(['{{ $usersTable }}_id', '{{ $rolesTable }}_id']);
+            $table->index('{{ $rolesTable }}_id', 'fk_{{ $roleUserTable }}_{{ $rolesTable }}1_idx');
+            $table->foreign('{{ $usersTable }}_id', 'fk_{{ $roleUserTable }}_{{ $usersTable }}')->references('{{ $userKeyName }}')->on('{{ $usersTable }}')->onDelete('no action')->onUpdate('no action');
+            $table->foreign('{{ $rolesTable }}_id', 'fk_{{ $roleUserTable }}_{{ $rolesTable }}1')->references('{{ $rolesTable }}_id')->on('{{ $rolesTable }}')->onDelete('no action')->onUpdate('no action');
+        
         });
 
         // Create table for storing permissions
         Schema::create('{{ $permissionsTable }}', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name')->unique();
-            $table->string('display_name')->nullable();
-            $table->string('description')->nullable();
-            $table->timestamps();
+            
+            $table->integer('{{ $permissionsTable }}_id', true);
+            $table->integer('m_application_id');
+            $table->string('{{ $permissionsTable }}_name', 255);
+            $table->string('{{ $permissionsTable }}_description', 255)->nullable();
+            $table->tinyInteger('{{ $permissionsTable }}_is_active')->default(1);
+            $table->dateTime('{{ $permissionsTable }}_update_time');
+            $table->dateTime('{{ $permissionsTable }}_create_time');
+            $table->integer('{{ $permissionsTable }}_modby');
+
+            $table->unique('{{ $permissionsTable }}_name', 'uk_{{ $permissionsTable }}_1');
+            $table->index('m_application_id', 'fk_{{ $permissionsTable }}_m_application1_idx');
+            $table->foreign('m_application_id', 'fk_{{ $permissionsTable }}_m_application1')->references('m_application_id')->on('m_application')->onDelete('no action')->onUpdate('no action');
+        
         });
 
         // Create table for associating permissions to roles (Many-to-Many)
         Schema::create('{{ $permissionRoleTable }}', function (Blueprint $table) {
-            $table->bigInteger('permission_id')->unsigned();
-            $table->bigInteger('role_id')->unsigned();
+            $table->integer('{{ $rolesTable }}_id');
+            $table->integer('{{ $permissionsTable }}_id');
+            $table->dateTime('{{ $permissionRoleTable }}_update_time');
+            $table->dateTime('{{ $permissionRoleTable }}_create_time');
+            $table->integer('{{ $permissionRoleTable }}_modby');
 
-            $table->foreign('permission_id')->references('id')->on('{{ $permissionsTable }}')
-                ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('role_id')->references('id')->on('{{ $rolesTable }}')
-                ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->primary(['permission_id', 'role_id']);
+            $table->primary(['{{ $rolesTable }}_id', '{{ $permissionsTable }}_id'], 'm_app_role_m_app_perm_primary');
+            $table->index('{{ $permissionsTable }}_id', 'fk_{{ $permissionRoleTable }}_{{ $permissionsTable }}1_idx');
+            $table->foreign('{{ $permissionsTable }}_id', 'fk_{{ $permissionRoleTable }}_{{ $permissionsTable }}1')->references('{{ $permissionsTable }}_id')->on('{{ $permissionsTable }}')->onDelete('no action')->onUpdate('no action');
+            $table->foreign('{{ $rolesTable }}_id', 'fk_{{ $permissionRoleTable }}_{{ $rolesTable }}1')->references('{{ $rolesTable }}_id')->on('{{ $rolesTable }}')->onDelete('no action')->onUpdate('no action');
         });
 
         DB::commit();
@@ -68,6 +90,7 @@ class EntrustSetupTables extends Migration
      */
     public function down()
     {
+        Schema::drop('{{ $applicationsTable }}');
         Schema::drop('{{ $permissionRoleTable }}');
         Schema::drop('{{ $permissionsTable }}');
         Schema::drop('{{ $roleUserTable }}');

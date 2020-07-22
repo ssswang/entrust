@@ -66,7 +66,7 @@ trait EntrustRoleTrait
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.providers.users.model'), Config::get('entrust.role_user_table'), Config::get('entrust.role_foreign_key'), Config::get('entrust.user_foreign_key'));
+        return $this->belongsToMany(Config::get('auth.providers.user.model'), Config::get('entrust.role_user_table'), Config::get('entrust.role_foreign_key'), Config::get('entrust.user_foreign_key'));
     }
 
     /**
@@ -128,7 +128,10 @@ trait EntrustRoleTrait
             return $requireAll;
         } else {
             foreach ($this->cachedPermissions() as $permission) {
-                if ($permission->name == $name) {
+                $permission_name = Config::get('entrust.permissions_table') . '_name';
+                $permission_is_active = Config::get('entrust.permissions_table' . 'is_active');
+
+                if ($permission->{$permission_name} == $name && $permission->{$permission_is_active}) {
                     return true;
                 }
             }
