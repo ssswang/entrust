@@ -55,10 +55,11 @@ php artisan vendor:publish
 
 ```php
 'providers' => [
-    'users' => [
-        'driver' => 'eloquent',
-        'model' => Namespace\Of\Your\User\Model\User::class,
-        'table' => 'users',
+    'user' => [
+        'driver' => 'shibboleth',
+        'model' => 'App\YourModel',
+        'table' => 'YourModelTable',
+        'primaryKey' => 'm_staff_id',
     ],
 ],
 ```
@@ -82,6 +83,11 @@ To further customize table names and model namespaces, edit the `config/entrust.
 
 ### User relation to roles
 
+For your local dev env setup, 
+YOU SHOULD HAVE MIMR2 ON YOUR LOCAL,
+IF YOU DO NOT,
+you may need following mockup tables
+
 Now generate the Entrust migration:
 
 ```bash
@@ -96,33 +102,26 @@ php artisan migrate
 ```
 
 After the migration, four new tables will be present:
-- `roles` &mdash; stores role records
-- `permissions` &mdash; stores permission records
-- `role_user` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and users
-- `permission_role` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and permissions
+- `m_access_group` &mdash; stores role records
+- `m_permission` &mdash; stores permission records
+- `m_staff_access` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and users
+- `m_access_group_permission` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and permissions
 
 ### Models
 
 #### Role
 
-Create a Role model inside `app/models/Role.php` using the following example:
+Create a AccessGroup model inside `app/MIMRModel/AccessGroup.php` using the following example:
 
 ```php
 <?php namespace App;
 
 use Zizaco\Entrust\EntrustRole;
 
-class Role extends EntrustRole
+class AccessGroup extends EntrustRole
 {
 }
 ```
-
-The `Role` model has three main attributes:
-- `name` &mdash; Unique name for the Role, used for looking up role information in the application layer. For example: "admin", "owner", "employee".
-- `display_name` &mdash; Human readable name for the Role. Not necessarily unique and optional. For example: "User Administrator", "Project Owner", "Widget  Co. Employee".
-- `description` &mdash; A more detailed explanation of what the Role does. Also optional.
-
-Both `display_name` and `description` are optional; their fields are nullable in the database.
 
 #### Permission
 
@@ -138,12 +137,6 @@ class Permission extends EntrustPermission
 }
 ```
 
-The `Permission` model has the same three attributes as the `Role`:
-- `name` &mdash; Unique name for the permission, used for looking up permission information in the application layer. For example: "create-post", "edit-user", "post-payment", "mailing-list-subscribe".
-- `display_name` &mdash; Human readable name for the permission. Not necessarily unique and optional. For example "Create Posts", "Edit Users", "Post Payments", "Subscribe to mailing list".
-- `description` &mdash; A more detailed explanation of the Permission.
-
-In general, it may be helpful to think of the last two attributes in the form of a sentence: "The permission `display_name` allows a user to `description`."
 
 #### User
 
@@ -192,19 +185,15 @@ $role->forceDelete(); // Now force delete will work regardless of whether the pi
 ## Usage
 
 ### Concepts
-Let's start by creating the following `Role`s and `Permission`s:
+Let's start by creating the following `AccessGroup(role)`s and `Permission`s:
 
 ```php
-$owner = new Role();
+$owner = new AccessGroup();
 $owner->name         = 'owner';
-$owner->display_name = 'Project Owner'; // optional
-$owner->description  = 'User is the owner of a given project'; // optional
 $owner->save();
 
-$admin = new Role();
+$admin = new AccessGroup();
 $admin->name         = 'admin';
-$admin->display_name = 'User Administrator'; // optional
-$admin->description  = 'User is allowed to manage and edit other users'; // optional
 $admin->save();
 ```
 
@@ -233,9 +222,7 @@ $createPost->save();
 
 $editUser = new Permission();
 $editUser->name         = 'edit-user';
-$editUser->display_name = 'Edit Users'; // optional
 // Allow a user to...
-$editUser->description  = 'edit existing users'; // optional
 $editUser->save();
 
 $admin->attachPermission($createPost);
