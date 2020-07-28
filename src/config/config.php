@@ -31,7 +31,7 @@ return [
     |
     */
     'roles_table' => 'm_access_group',
-
+    'roles_column_prefix' => "m_access_group",
     /*
     |--------------------------------------------------------------------------
     | Entrust role foreign key
@@ -108,7 +108,7 @@ return [
     |
     */
     'permissions_table' => 'm_permission',
-
+    'permissions_column_prefix' => 'm_permission',
     /*
     |--------------------------------------------------------------------------
     | Entrust permission_role Table
