@@ -127,8 +127,8 @@ trait EntrustUserTrait
             return $requireAll;
         } else {
             foreach ($this->cachedRoles() as $role) {
-                $role_name = Config::get('entrust.roles_table') . '_name';
-                $role_is_active = Config::get('entrust.roles_table') . '_is_active';
+                $role_name = Config::get('entrust.roles_column_prefix') . '_name';
+                $role_is_active = Config::get('entrust.roles_column_prefix') . '_is_active';
 
                 if ($role->{$role_name} == $name && $role->{$role_is_active}) {
                     return true;
@@ -166,12 +166,12 @@ trait EntrustUserTrait
             return $requireAll;
         } else {
             foreach ($this->cachedRoles() as $role) {
-                $role_is_active = Config::get('entrust.roles_table') . '_is_active';
+                $role_is_active = Config::get('entrust.roles_column_prefix') . '_is_active';
                 if ($role->{$role_is_active}) {
                     // Validate against the Permission table
                     foreach ($role->cachedPermissions() as $perm) {
-                        $permission_name = Config::get('entrust.permissions_table') . '_name';
-                        $permission_is_active = Config::get('entrust.permissions_table') . '_is_active';
+                        $permission_name = Config::get('entrust.permissions_column_prefix') . '_name';
+                        $permission_is_active = Config::get('entrust.permissions_column_prefix') . '_is_active';
                         if (Str::is( $permission, $perm->{$permission_name}) && $perm->{$permission_is_active} ) {
                             return true;
                         }
