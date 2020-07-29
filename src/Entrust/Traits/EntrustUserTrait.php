@@ -176,6 +176,7 @@ trait EntrustUserTrait
                             return true;
                         }
                     }
+                }
             }
         }
 
