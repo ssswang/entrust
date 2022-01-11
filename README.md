@@ -30,7 +30,7 @@ Entrust is a succinct and flexible way to add Role-based Permissions to **Larave
 1) In order to install Laravel Entrust for mimr, just add the following to your composer.json. Then run `composer update`:
 
 ```json
-"ssswang/entrust": "^3.0"
+"ssswang/entrust": "^3.1"
 ```
 
 
