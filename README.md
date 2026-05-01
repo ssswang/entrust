@@ -1,4 +1,4 @@
-# ENTRUST for eTools (Laravel 8 Package)
+# ENTRUST for eTools (Laravel Package)
 
 Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 8**.
 
