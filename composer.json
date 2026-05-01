@@ -27,13 +27,13 @@
     ],
     "require": {
         "php": ">=7.2",
-        "illuminate/console": "~6.0|^7.0|^8.0|^9|^10|^11",
-        "illuminate/support": "^6|^7|^8|^9|^10|^11",
-        "illuminate/cache": "~6.0|^7.0|^8.0|^9|^10|^11"
+        "illuminate/console": "~6.0|^7.0|^8.0|^9|^10|^11|^12|^13",
+        "illuminate/support": "^6|^7|^8|^9|^10|^11"|^12|^13,
+        "illuminate/cache": "~6.0|^7.0|^8.0|^9|^10|^11|^12|^13"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.0|^8.0|^9.0|^10|^11",
-        "illuminate/database": "~6.0|^7.0|^8.0|^9|^10|^11"
+        "phpunit/phpunit": "^7.0|^8.0|^9.0|^10|^111|^12",
+        "illuminate/database": "~6.0|^7.0|^8.0|^9|^10|^11|^12|^13"
     },
     "autoload": {
         "classmap": [
