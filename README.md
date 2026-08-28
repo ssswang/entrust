@@ -1,6 +1,6 @@
 # ENTRUST for eTools (Laravel Package)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 8**.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 10 and newer** (PHP 8.1+).
 
 ## Contents
 
@@ -53,7 +53,7 @@ php artisan vendor:publish
 ],
 ```
 
-6)  If you want to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add the following:
+6)  If you want to use [Middleware](#middleware) you also need to add the following:
 
 ```php
     'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,

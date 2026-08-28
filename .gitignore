@@ -20,3 +20,4 @@ Thumbs.db
 /.phpintel
 
 .phpunit.result.cache
+.phpunit.cache

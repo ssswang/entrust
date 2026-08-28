@@ -37,9 +37,9 @@ trait EntrustRoleTrait
         return true;
     }
 
-    public function delete(array $options = [])
+    public function delete()
     {   //soft or hard
-        if (!parent::delete($options)) {
+        if (!parent::delete()) {
             return false;
         }
         if (Cache::getStore() instanceof TaggableStore) {
